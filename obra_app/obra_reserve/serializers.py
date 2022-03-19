@@ -2,6 +2,7 @@ from rest_framework import serializers
 from obra_reserve.models import Customer, Equipment, Renter, Driver, Order, Contract 
 import hashlib
 import binascii
+from hashlib import pbkdf2_hmac
 #Serializers basically help convert complex types or model instances into native 
 #python datatypes that can then be easily rendered into Json XML or other content types.
 #They also help with serialization which is simply reverting data back into complex types
@@ -10,20 +11,36 @@ import binascii
     password = hashlib.pbkdf2_hmac(b'password',b'salt', iterations=10000)
     binascii.hexlify(password)"""
 
-def hash_password(self, password):
-    return hashlib.pbkdf2_hmac(
-        hash_name='sha256',
-        password=bytes(password, 'utf8'),
-        salt=self.salt,
-        iterations=100000,
-)
+def hash_password(password):
+    dk = pbkdf2_hmac('sha256', b'password', b'bad salt'*2, 5000)
+    return dk.hex()
+
 class CustomerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Customer
         fields = ('id', 'first_name', 'last_name', 'email',
-                  'contact_number', 'credit_card', 'billing_address')
-        password = hashlib.pbkdf2_hmac(b'password',b'salt', iterations=10000)
-        binascii.hexlify(password)
+                  'contact_number', 'credit_card', 'billing_address', 'password')
+
+        Customer.password = hash_password(Customer.password)
+
+
+"""        password = hashlib.pbkdf2_hmac('sha256', b'password',b'salt', iterations=10000)
+        binascii.hexlify(password)"""
+
+# hash algorythm working (insomia: reads encryption, sql: will not apply encryption)
+
+"""
+def random_passhash():
+     password = ''.join(
+        random.choices(
+            string.ascii_letters + string.digits + '!@#$%&', # valid pw characters
+            k=random.randint(8, 15) # length of pw
+        )
+    )
+
+   salt = secrets.token_hex(16)
+
+    return hashlib.sha512((raw + salt).encode('utf-8')).hexdigest()"""
 
 class EquipmentSerializer(serializers.ModelSerializer):
     class Meta:

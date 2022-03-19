@@ -1,4 +1,6 @@
 from django.db import models
+from hashlib import pbkdf2_hmac
+
 #from django.contrib.auth.hashers import make_password
 #Create your models here.
 
@@ -12,6 +14,9 @@ class Customer(models.Model):
     billing_address = models.CharField(unique=True, max_length=50)
     password = models.CharField(null=False, max_length=17)
     registered = models.DateTimeField(auto_now_add=True)
+
+    dk = pbkdf2_hmac('sha256', b'password', b'bad salt'*2, 5000)
+    password = dk.hex()
 
 """    def save(self, *args, **kwargs):
         self.password = make_password(self.password)
