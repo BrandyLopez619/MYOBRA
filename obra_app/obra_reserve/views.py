@@ -24,7 +24,6 @@ def customerApi(request, id=0):
     elif request.method == 'POST':
         customer_data = JSONParser().parse(request)
         customers_serializer = CustomerSerializer(data=customer_data)
-        
         if customers_serializer.is_valid():
             customers_serializer.save()
             return JsonResponse("Customer Created Successfully", safe=False)

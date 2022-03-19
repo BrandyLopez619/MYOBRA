@@ -18,10 +18,6 @@ class Customer(models.Model):
     dk = pbkdf2_hmac('sha256', b'password', b'bad salt'*2, 5000)
     password = dk.hex()
 
-"""    def save(self, *args, **kwargs):
-        self.password = make_password(self.password)
-        super(Customer, self).save(*args, **kwargs)"""
-
 class Renter(models.Model):
     id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=20)
@@ -33,10 +29,6 @@ class Renter(models.Model):
     password = models.CharField(null=False, max_length=17)
     registered = models.DateTimeField(auto_now_add=True)
 
-"""    def save(self, *args, **kwargs):
-        self.password = make_password(self.password)
-        super(Renter, self).save(*args, **kwargs)
-"""
 class Driver(models.Model):
     id = models.AutoField(primary_key=True)
     first_name = models.CharField(max_length=20)
@@ -50,10 +42,6 @@ class Driver(models.Model):
     password = models.CharField(null=False, max_length=17)
     registered = models.DateTimeField(auto_now_add=True)
 
-"""    def save(self, *args, **kwargs):
-        self.password = make_password(self.password)
-        super(Driver, self).save(*args, **kwargs)
-"""
 class Equipment(models.Model):
     id = models.AutoField(primary_key=True)
     year = models.CharField(null=False, max_length=4)
